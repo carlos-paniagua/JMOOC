@@ -23,9 +23,10 @@
   $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 
   if($flag)  {
-      $extra = "stockList.php";
-      header("Location: http://$host$uri/$extra");
-      exit();
+      include "dbConnect.php";
+
+      $user_number = $_POST["user_number"];
+      $user_name = $POST[]
     }
     else {
       $extra = "userRegister.html";
