@@ -1,4 +1,6 @@
 <?php
+  session_start(); 
+
   include "dbConnect.php";
   
   $user_number = $_POST["user_number"];
@@ -23,11 +25,14 @@
   $host = $_SERVER['HTTP_HOST'];
   $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
   if($flag){
+      $user = array("user_id" => $row["user_id"],"user_name" => $row["user_name"]);
+      $_SESSION["user"]  = $user;
      $extra = "stockList.php";
      header("Location: http://$host$uri/$extra");
      exit();
   }
   else{
+    session_destroy();
      $extra = "index2.html";
      header("Location: http://$host$uri/$extra");
      exit();
