@@ -26,10 +26,11 @@
   $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
   if($flag){
       $user = array("user_id" => $row["user_id"],"user_name" => $row["user_name"]);
-      $_SESSION["user"]  = $user;
-     $extra = "stockList.php";
-     header("Location: http://$host$uri/$extra");
-     exit();
+      $_SESSION["user"] = $user;
+      $_SESSION["type"] = 0;
+      $extra = "stockList.php";
+      header("Location: http://$host$uri/$extra");
+      exit();
   }
   else{
     session_destroy();
