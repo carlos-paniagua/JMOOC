@@ -1,10 +1,10 @@
 <?php
 session_start();
 if (isset($_SESSION["user"])) {
-
+	//ユーザ情報がある
 	$user = $_SESSION["user"];
 } else {
-
+	//ユーザ情報がない
 	session_destroy();
 	$host = $_SERVER['HTTP_HOST'];
 	$uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
@@ -23,12 +23,16 @@ if (isset($_POST['type_select'])) {
 	$type = $_SESSION["type"];
 }
 
-$sql  = "SELECT * FROM stockList";
 if ($type > 0) {
-	$sql .= " WHERE type=$type";
+	$where = " WHERE type=$type";
+} else {
+	$where = "";
 }
-
-echo $sql;
+$sql = "SELECT List.stock_id , List.stock_name , List.amount , List.type , ";
+$sql .= " Log.sum_n , List.remarks  FROM stockList as List  LEFT JOIN ";
+$sql .= " (SELECT stock_id , SUM(in_out_n) AS sum_n FROM stockLog ";
+$sql .= " GROUP BY stock_id) as Log ON List.stock_id = Log.stock_id ";
+$sql .= " $where ORDER BY List.stock_id  ";
 
 if ($result = mysqli_query($conn, $sql)) {
 } else {
@@ -36,11 +40,13 @@ if ($result = mysqli_query($conn, $sql)) {
 	exit();
 }
 
+
 if (isset($_GET['m'])) {
 	$mode = $_GET['m'];
 } else {
 	$mode = 0;
 }
+
 //切断
 mysqli_close($conn);
 ?>
@@ -60,7 +66,7 @@ mysqli_close($conn);
 			<img src="images/logo.gif">
 			<div id="header_title">在庫管理システム</div>
 			<form action="logout.php" method="post">
-				<div id="header_user"><?= $user["user_name"] ?>様
+				<div id="header_user"><?= $user["user_name"] ?> 様
 					<input type="submit" value="ログアウト">
 				</div>
 			</form>
@@ -69,7 +75,7 @@ mysqli_close($conn);
 		<div id="nav">
 			<ul>
 				<li>メニュー選択</li>
-				<li><a href="stockList.php?m-0">在庫一覧</a></li>
+				<li><a href="stockList.php?m=0">在庫一覧</a></li>
 				<li><a href="stockList.php?m=1">入庫（仕入れ）</a></li>
 				<li><a href="stockList.php?m=2">出庫（消費）</a></li>
 			</ul>
@@ -155,7 +161,6 @@ mysqli_close($conn);
 						<th>内容量</th>
 						<th>種類</th>
 						<th>個数</th>
-
 						<?php
 						if ($mode == 0) {
 						?>
@@ -189,7 +194,7 @@ mysqli_close($conn);
 							<td><?= $val["stock_name"] ?></td>
 							<td class="num"><?= $val["amount"] ?></td>
 							<td><?= $type_s ?></td>
-							<td class="num"></td>
+							<td class="num"><?= $val["sum_n"] ?> </td>
 							<?php
 							if ($mode == 0) {
 							?>
@@ -211,15 +216,11 @@ mysqli_close($conn);
 				<?php
 				if ($mode == 1) {
 				?>
-					<div class="right_elements">
-						<input type="submit" name="in" value="入庫">
-					</div>
+					<div class="right_elements"><input type="submit" name="in" value="入庫"></div>
 				<?php
 				} else if ($mode == 2) {
 				?>
-					<div class="right_elements">
-						<input type="submit" name="out" value="出庫">
-					</div>
+					<div class="right_elements"><input type="submit" name="out" value="出庫"></div>
 				<?php
 				}
 				?>
