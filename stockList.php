@@ -147,77 +147,83 @@ mysqli_close($conn);
 				</select>
 				<input type="submit" value="切り替え">
 			</form>
-			<table width="100%">
-				<tr>
-					<th>番号</th>
-					<th>材料</th>
-					<th>内容量</th>
-					<th>種類</th>
-					<th>個数</th>
-
-					<?php
-					if ($mode == 0) {
-					?>
-						<th>備考</th>
-					<?php
-					} else if ($mode == 1) {
-					?>
-						<th>入庫個数</th>
-					<?php
-					} else {
-					?>
-						<th>出庫個数</th>
-					<?php
-					}
-					?>
-				</tr>
-				<?php
-				while ($val = mysqli_fetch_assoc($result)) {
-					if ($val["type"] == 1) {
-						$type_s = "パン生地の材料";
-					} else if ($val["type"] == 2) {
-						$type_s = "ドライフルーツ";
-					} else if ($val["type"] == 3) {
-						$type_s = "調味料";
-					} else if ($val["type"] == 4) {
-						$type_s = "和菓子の材料";
-					}
-				?>
+			<form action="log.php" method="post">
+				<table width="100%">
 					<tr>
-						<td class="num"><?= $val["stock_id"] ?></td>
-						<td><?= $val["stock_name"] ?></td>
-						<td class="num"><?= $val["amount"] ?></td>
-						<td><?= $type_s ?></td>
-						<td class="num"></td>
+						<th>番号</th>
+						<th>材料</th>
+						<th>内容量</th>
+						<th>種類</th>
+						<th>個数</th>
+
 						<?php
 						if ($mode == 0) {
 						?>
-							<td><?= $val["remarks"] ?></td>
+							<th>備考</th>
+						<?php
+						} else if ($mode == 1) {
+						?>
+							<th>入庫個数</th>
 						<?php
 						} else {
 						?>
-							<td class="center_elements">
-								<input type="text" size="4" name="<?= $val["stock_id"] ?>">
-							</td>
+							<th>出庫個数</th>
 						<?php
 						}
 						?>
 					</tr>
+					<?php
+					while ($val = mysqli_fetch_assoc($result)) {
+						if ($val["type"] == 1) {
+							$type_s = "パン生地の材料";
+						} else if ($val["type"] == 2) {
+							$type_s = "ドライフルーツ";
+						} else if ($val["type"] == 3) {
+							$type_s = "調味料";
+						} else if ($val["type"] == 4) {
+							$type_s = "和菓子の材料";
+						}
+					?>
+						<tr>
+							<td class="num"><?= $val["stock_id"] ?></td>
+							<td><?= $val["stock_name"] ?></td>
+							<td class="num"><?= $val["amount"] ?></td>
+							<td><?= $type_s ?></td>
+							<td class="num"></td>
+							<?php
+							if ($mode == 0) {
+							?>
+								<td><?= $val["remarks"] ?></td>
+							<?php
+							} else {
+							?>
+								<td class="center_elements">
+									<input type="text" size="4" name="<?= $val["stock_id"] ?>">
+								</td>
+							<?php
+							}
+							?>
+						</tr>
+					<?php
+					}
+					?>
+				</table>
+				<?php
+				if ($mode == 1) {
+				?>
+					<div class="right_elements">
+						<input type="submit" name="in" value="入庫">
+					</div>
+				<?php
+				} else if ($mode == 2) {
+				?>
+					<div class="right_elements">
+						<input type="submit" name="out" value="出庫">
+					</div>
 				<?php
 				}
 				?>
-			</table>
-			<?php
-			if ($mode == 1) {
-			?>
-				<div class="right_elements"><input type="submit" value="入庫"></div>
-			<?php
-			} else if ($mode == 2) {
-			?>
-				<div class="right_elements"><input type="submit" value="出庫"></div>
-			<?php
-			}
-			?>
+			</form>
 		</div>
 		<div id="footer">
 			Copyright © All Rights Reserved by JMOOC
